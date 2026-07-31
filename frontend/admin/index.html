@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin - Rifa</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+</head>
+<body>
+  <section class="login">
+    <form id="loginForm" class="panel">
+      <h1>Painel Administrativo</h1>
+      <label>Usuário<input id="user" required autocomplete="username"></label>
+      <label>Senha<input id="pass" type="password" required autocomplete="current-password"></label>
+      <button>Entrar</button>
+      <p>Altere ADMIN_USER e ADMIN_PASSWORD no .env em produção.</p>
+    </form>
+  </section>
+
+  <main class="app">
+    <div class="top"><h1>Dashboard da Rifa</h1><button id="logout" class="danger">Sair</button></div>
+    <section id="stats" class="cards"></section>
+
+    <section class="card">
+      <h2>Identidade visual, PIX, Sorteio ao Vivo e Resultado</h2>
+      <form id="settingsForm" class="settings-grid">
+        <div>
+          <label>Imagem/banner da rifa<input id="banner_file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          <div id="bannerPreview" class="preview"></div>
+          <button id="remove_banner" class="danger" type="button">Remover banner</button>
+        </div>
+        <div>
+          <label>QR Code PIX<input id="pix_qr_file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+          <div id="pixPreview" class="preview small"></div>
+          <button id="remove_pix" class="danger" type="button">Remover QR Code</button>
+        </div>
+        <label>Chave PIX<input id="pix_key" placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória"></label>
+        <label>Nome do recebedor<input id="pix_receiver" placeholder="Nome de quem receberá o PIX"></label>
+        <label>Link da transmissão<input id="live_link" placeholder="https://..."></label>
+        <label>Número sorteado<input id="result_number" placeholder="Ex.: 1057"></label>
+        <label>Nome do ganhador<input id="result_winner"></label>
+        <label>Link para assistir novamente<input id="result_replay_link" placeholder="https://..."></label>
+        <button class="ok">Salvar configurações</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Números da rifa</h2>
+      <input id="search" placeholder="Pesquisar por nome, telefone ou número">
+      <div id="tickets"></div>
+    </section>
+  </main>
+  <script src="/admin/admin.js"></script>
+</body>
+</html>

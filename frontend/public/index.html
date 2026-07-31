@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rifa iPhone 16 256GB - Esperia</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-wrap">
+      <div class="hero-copy">
+        <span class="pill">Sorteio em <b id="draw"></b></span>
+        <h1 id="title">Rifa iPhone 16 256GB - Esperia</h1>
+        <p>Escolha seus números, consulte suas reservas e acompanhe o sorteio ao vivo em uma experiência inspirada nas cores do Clube Esperia.</p>
+        <div class="hero-actions">
+          <a class="btn ghost" href="#consultar">Consultar meus números</a>
+          <button class="btn yellow" id="shareButton" type="button">Compartilhar no WhatsApp</button>
+        </div>
+      </div>
+      <div id="banner" class="banner"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card stats">
+      <div class="stat green"><span>Disponíveis</span><strong id="available">0</strong></div>
+      <div class="stat yellow"><span>Reservados</span><strong id="reserved">0</strong></div>
+      <div class="stat red"><span>Vendidos</span><strong id="sold">0</strong></div>
+      <div class="stat blue"><span>Valor arrecadado</span><strong id="raised">R$ 0,00</strong></div>
+    </section>
+
+    <section class="card progress-card">
+      <div class="progress-title"><b>Progresso das vendas</b><span id="progressLabel">0% vendido</span></div>
+      <div class="progress"><div class="bar" id="progress"></div></div>
+      <p id="priceInfo"></p>
+    </section>
+
+    <section class="columns main-grid">
+      <div class="card">
+        <h2>Escolha seus números</h2>
+        <p class="legend"><span class="dot available-dot"></span>Disponível <span class="dot reserved-dot"></span>Reservado <span class="dot sold-dot"></span>Vendido</p>
+        <div id="ticketGrid" class="grid"></div>
+      </div>
+      <aside class="card checkout">
+        <h2>Reservar pelo WhatsApp</h2>
+        <p>Selecionados: <b id="chosen">Nenhum</b></p>
+        <form id="reserveForm">
+          <label>Nome<input id="name" required autocomplete="name"></label>
+          <label>Telefone<input id="phone" required inputmode="tel" autocomplete="tel"></label>
+          <label>Observação<textarea id="note" rows="3" placeholder="Opcional"></textarea></label>
+          <button class="btn" type="submit">Reservar pelo WhatsApp</button>
+        </form>
+        <div id="pixArea" class="pix-area"></div>
+      </aside>
+    </section>
+
+    <section class="columns">
+      <div class="card" id="consultar">
+        <h2>Consultar meus números</h2>
+        <p>Digite o telefone informado na reserva. Não precisa de senha.</p>
+        <form id="consultForm">
+          <label>Telefone<input id="consultPhone" required inputmode="tel"></label>
+          <button class="btn secondary">Consultar</button>
+        </form>
+        <div id="consultResult" class="message"></div>
+      </div>
+      <div class="card">
+        <h2>Sorteio ao Vivo</h2>
+        <div id="liveArea"></div>
+        <hr>
+        <div id="resultArea" class="result-box"></div>
+        <a href="/resultado.html" class="result-link">Abrir página de resultado</a>
+      </div>
+    </section>
+  </main>
+  <footer>© 2026 Rifa iPhone 16 256GB - Esperia • Responsável: Ricardo</footer>
+  <script src="/app.js"></script>
+</body>
+</html>

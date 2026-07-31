@@ -1,0 +1,12 @@
+const router = require('express').Router();
+const auth = require('../middleware/auth');
+const raffle = require('../controllers/raffleController');
+const authController = require('../controllers/authController');
+router.post('/login', authController.login);
+router.post('/logout', authController.logout);
+router.get('/me', authController.me);
+router.get('/dashboard', auth, raffle.adminData);
+router.put('/tickets/:number', auth, raffle.updateTicket);
+router.delete('/tickets/:number', auth, raffle.deleteReservation);
+router.put('/settings', auth, raffle.updateSettings);
+module.exports = router;

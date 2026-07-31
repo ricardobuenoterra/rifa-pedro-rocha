@@ -1,0 +1,22 @@
+const express = require('express');
+const session = require('express-session');
+const helmet = require('helmet');
+const path = require('path');
+const config = require('./config');
+const { initDatabase } = require('../database/db');
+const publicRoutes = require('./routes/publicRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+
+initDatabase();
+const app = express();
+app.use(helmet({ contentSecurityPolicy: false }));
+app.use(express.json({ limit: '6mb' }));
+app.use(express.urlencoded({ extended: true, limit: '6mb' }));
+app.use(session({ secret: config.sessionSecret, resave: false, saveUninitialized: false, cookie: { httpOnly: true, sameSite: 'lax' } }));
+app.use('/api', publicRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/admin', express.static(config.adminPath));
+app.use(express.static(config.frontendPath));
+app.get('/admin*', (req, res) => res.sendFile(path.join(config.adminPath, 'index.html')));
+app.get('*', (req, res) => res.sendFile(path.join(config.frontendPath, 'index.html')));
+app.listen(config.port, () => console.log(`Rifa online na porta ${config.port}`));

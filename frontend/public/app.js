@@ -2,6 +2,28 @@ const state = { selected: new Set(), data: null };
 const $ = (selector) => document.querySelector(selector);
 const statusText = { available: 'Disponível', reserved: 'Reservado', sold: 'Vendido' };
 
+function money(value) {
+  return Number(value || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function calculateRaffleAmount(quantity) {
+  const promotion = state.data?.ticketPromotion || { quantity: 2, price: 50 };
+  const count = Math.max(0, Number(quantity) || 0);
+  const promoQuantity = Math.max(1, Number(promotion.quantity) || 2);
+  const promoPrice = Number(promotion.price) || 50;
+  const ticketPrice = Number(state.data?.ticketPrice) || 30;
+  return Math.floor(count / promoQuantity) * promoPrice + (count % promoQuantity) * ticketPrice;
+}
+
+function updateSelectionSummary() {
+  const numbers = [...state.selected].sort((a, b) => a - b);
+  const total = calculateRaffleAmount(numbers.length);
+  $('#chosen').textContent = numbers.join(', ') || 'Nenhum';
+  $('#chosenQuantity').textContent = numbers.length;
+  $('#chosenTotal').textContent = money(total);
+  $('#reserveButton').textContent = `Reservar pelo WhatsApp - Total: ${money(total)}`;
+}
+
 async function load() {
   const response = await fetch('/api/raffle');
   state.data = await response.json();
@@ -22,10 +44,10 @@ function render() {
   $('#available').textContent = summary.available;
   $('#reserved').textContent = summary.reserved;
   $('#sold').textContent = summary.sold;
-  $('#raised').textContent = Number(summary.raised || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  $('#raised').textContent = money(summary.raised);
   $('#progress').style.width = `${percent}%`;
   $('#progressLabel').textContent = `${percent}% vendido`;
-  $('#priceInfo').textContent = ticketPrice > 0 ? `Valor por número: ${Number(ticketPrice).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}` : 'Valor por número informado pelo organizador.';
+  $('#priceInfo').textContent = ticketPrice > 0 ? `Valor por número: ${money(ticketPrice)} • Promoção: 2 números por ${money(state.data.ticketPromotion?.price || 50)}` : 'Valor por número informado pelo organizador.';
 
   $('#banner').innerHTML = settings.banner_image
     ? `<img src="${settings.banner_image}" alt="Banner da rifa">`
@@ -51,6 +73,8 @@ function render() {
 
   const replay = safeLink(settings.result_replay_link);
   const hasResult = settings.result_number || settings.result_winner || replay;
+  updateSelectionSummary();
+
   $('#resultArea').innerHTML = hasResult ? `
     <h3>Resultado</h3>
     <p><b>Número sorteado:</b> ${settings.result_number || '-'}</p>
@@ -65,24 +89,25 @@ document.addEventListener('click', (event) => {
   const number = Number(button.dataset.n);
   state.selected.has(number) ? state.selected.delete(number) : state.selected.add(number);
   button.classList.toggle('selected');
-  $('#chosen').textContent = [...state.selected].sort().join(', ') || 'Nenhum';
+  updateSelectionSummary();
 });
 
 $('#reserveForm').addEventListener('submit', async (event) => {
   event.preventDefault();
-  const numbers = [...state.selected].sort();
+  const numbers = [...state.selected].sort((a, b) => a - b);
   if (!numbers.length) return alert('Escolha ao menos um número.');
 
+  const total = calculateRaffleAmount(numbers.length);
   const payload = { name: $('#name').value, phone: $('#phone').value, note: $('#note').value, numbers };
   const response = await fetch('/api/reserve', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
   const result = await response.json();
   if (!response.ok) return alert(result.error);
 
-  const message = encodeURIComponent(`Olá! Quero reservar números da rifa.\n\nNome: ${payload.name}\nTelefone: ${payload.phone}\nObservação: ${payload.note || '-'}\nNúmeros: ${numbers.join(', ')}\n\nChave PIX: ${state.data.settings.pix_key || '-'}`);
+  const message = encodeURIComponent(`Olá! Quero reservar números da rifa.\n\nNome: ${payload.name}\nTelefone: ${payload.phone}\nObservação: ${payload.note || '-'}\nNúmeros: ${numbers.join(', ')}\nQuantidade: ${numbers.length}\nTotal: ${money(total)}\n\nChave PIX: ${state.data.settings.pix_key || '-'}`);
   window.open(`https://wa.me/${state.data.raffle.whatsapp}?text=${message}`, '_blank');
   state.selected.clear();
   event.target.reset();
-  $('#chosen').textContent = 'Nenhum';
+  updateSelectionSummary();
   await load();
 });
 

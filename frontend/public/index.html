@@ -23,6 +23,18 @@
   </header>
 
   <main>
+    <section class="card raffle-price-card" aria-labelledby="rafflePriceTitle">
+      <div class="price-icon" aria-hidden="true">💰</div>
+      <div>
+        <p class="eyebrow">VALOR DA RIFA</p>
+        <h2 id="rafflePriceTitle">Escolha mais e aproveite a promoção</h2>
+        <ul>
+          <li><strong>1 número</strong> = R$ 30,00</li>
+          <li><strong>PROMOÇÃO: 2 números</strong> = R$ 50,00</li>
+        </ul>
+      </div>
+    </section>
+
     <section class="card stats">
       <div class="stat green"><span>Disponíveis</span><strong id="available">0</strong></div>
       <div class="stat yellow"><span>Reservados</span><strong id="reserved">0</strong></div>
@@ -44,12 +56,16 @@
       </div>
       <aside class="card checkout">
         <h2>Reservar pelo WhatsApp</h2>
-        <p>Selecionados: <b id="chosen">Nenhum</b></p>
+        <div class="selection-summary" aria-live="polite">
+          <p>Selecionados: <b id="chosen">Nenhum</b></p>
+          <p>Quantidade escolhida: <b id="chosenQuantity">0</b></p>
+          <p>Valor total: <b id="chosenTotal">R$ 0,00</b></p>
+        </div>
         <form id="reserveForm">
           <label>Nome<input id="name" required autocomplete="name"></label>
           <label>Telefone<input id="phone" required inputmode="tel" autocomplete="tel"></label>
           <label>Observação<textarea id="note" rows="3" placeholder="Opcional"></textarea></label>
-          <button class="btn" type="submit">Reservar pelo WhatsApp</button>
+          <button class="btn" id="reserveButton" type="submit">Reservar pelo WhatsApp - Total: R$ 0,00</button>
         </form>
         <div id="pixArea" class="pix-area"></div>
       </aside>

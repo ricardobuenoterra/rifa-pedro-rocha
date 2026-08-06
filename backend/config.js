@@ -8,7 +8,11 @@ module.exports = {
   sessionSecret: process.env.SESSION_SECRET || 'troque-este-segredo-em-producao',
   adminUser: process.env.ADMIN_USER || 'admin',
   adminPassword: process.env.ADMIN_PASSWORD || 'admin123',
-  ticketPrice: Number(process.env.TICKET_PRICE || 0),
+  ticketPrice: Number(process.env.TICKET_PRICE || 30),
+  ticketPromotion: {
+    quantity: Number(process.env.TICKET_PROMO_QUANTITY || 2),
+    price: Number(process.env.TICKET_PROMO_PRICE || 50),
+  },
   dbPath: process.env.DB_PATH || path.join(ROOT, 'database', 'rifa.sqlite'),
   frontendPath: path.join(ROOT, 'frontend', 'public'),
   adminPath: path.join(ROOT, 'frontend', 'admin'),

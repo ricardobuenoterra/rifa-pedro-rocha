@@ -12,20 +12,28 @@ function getSettings() {
   return Object.fromEntries(db.prepare('SELECT key, value FROM settings').all().map((row) => [row.key, row.value]));
 }
 
+function calculateRaffleAmount(quantity) {
+  const count = Math.max(0, Number(quantity) || 0);
+  const promoQuantity = Math.max(1, Number(config.ticketPromotion?.quantity) || 2);
+  const promoPrice = Number(config.ticketPromotion?.price) || 50;
+  const ticketPrice = Number(config.ticketPrice) || 30;
+  return Math.floor(count / promoQuantity) * promoPrice + (count % promoQuantity) * ticketPrice;
+}
+
 function getSummary() {
   const rows = db.prepare('SELECT status, COUNT(*) total FROM tickets GROUP BY status').all();
   const counts = { available: 0, reserved: 0, sold: 0 };
   rows.forEach((row) => { counts[row.status] = row.total; });
   return {
     ...counts,
-    raised: counts.sold * config.ticketPrice,
-    expected: (config.raffle.end - config.raffle.start + 1) * config.ticketPrice,
+    raised: calculateRaffleAmount(counts.sold),
+    expected: calculateRaffleAmount(config.raffle.end - config.raffle.start + 1),
   };
 }
 
 exports.publicData = (req, res) => {
   const tickets = db.prepare(`SELECT number, status FROM tickets ORDER BY number`).all();
-  res.json({ raffle: config.raffle, ticketPrice: config.ticketPrice, summary: getSummary(), settings: getSettings(), tickets });
+  res.json({ raffle: config.raffle, ticketPrice: config.ticketPrice, ticketPromotion: config.ticketPromotion, summary: getSummary(), settings: getSettings(), tickets });
 };
 
 exports.reserve = (req, res) => {
@@ -61,7 +69,7 @@ exports.adminData = (req, res) => {
   } else {
     tickets = db.prepare(`SELECT ${publicTicketFields}, updated_at FROM tickets ORDER BY number`).all();
   }
-  res.json({ raffle: config.raffle, ticketPrice: config.ticketPrice, summary: getSummary(), settings: getSettings(), tickets });
+  res.json({ raffle: config.raffle, ticketPrice: config.ticketPrice, ticketPromotion: config.ticketPromotion, summary: getSummary(), settings: getSettings(), tickets });
 };
 
 exports.updateTicket = (req, res) => {
